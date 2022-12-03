@@ -8,9 +8,9 @@ ENV \
   GOOS=linux
 WORKDIR /go/src/github.com/sorintlab/stolon
 ADD . .
-RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/keeper cmd/keeper/*.go
-RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/proxy cmd/proxy/*.go
-RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/sentinel cmd/sentinel/*.go
+RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/stolon-keeper cmd/keeper/*.go
+RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/stolon-proxy cmd/proxy/*.go
+RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/stolon-sentinel cmd/sentinel/*.go
 RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/cmd.Version=${VERSION} -s" -o /go/bin/stolonctl cmd/stolonctl/*.go
 
 
