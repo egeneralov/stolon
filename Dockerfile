@@ -1,7 +1,7 @@
 ARG PGVERSION
 ARG VERSION
 
-FROM golang:1.18.3-buster
+FROM golang:1.13-buster
 ENV \
   GO111MODULE=on \
   CGO_ENABLED=0 \
