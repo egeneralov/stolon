@@ -46,6 +46,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
       - name: Docker meta first
         id: first
         uses: docker/metadata-action@v3
@@ -53,7 +57,9 @@ jobs:
           images: |
             ghcr.io/${{ github.repository }}/${{ matrix.version }}-${{ matrix.pgversion }}
           tags: |
-            type=schedule,pattern={{date 'YYYYMMDD'}}
+            latest
+            {{date 'YYYYMMDD'}}
+            ${{ steps.date.outputs.date }}
             type=sha
           labels: |
             maintainer=egeneralov
