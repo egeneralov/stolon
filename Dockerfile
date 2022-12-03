@@ -16,5 +16,4 @@ RUN go build -v -installsuffix cgo -ldflags="-w -X github.com/sorintlab/stolon/c
 
 FROM postgres:$PGVERSION
 RUN useradd -ms /bin/bash stolon
-ENV PATH='/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 COPY --from=0 /go/bin /usr/local/bin
