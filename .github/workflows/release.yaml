@@ -1,0 +1,75 @@
+on:
+  push: {}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        version:
+          - v0.17.0
+          - v0.16.0
+          - v0.15.0
+          - v0.14.0
+          - v0.13.0
+          - v0.12.0
+          - v0.11.0
+          - v0.10.0
+        pgversion:
+          - 15.1-bullseye
+          - 14.6-bullseye
+          - 13.9-bullseye
+          - 12.13-bullseye
+          - 11.18-bullseye
+          - 10.23-bullseye
+          - 9.6-bullseye
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: clone stolon
+        run: git clone https://github.com/sorintlab/stolon
+
+      - name: checkout stolon version
+        run: cd stolon && git checkout ${{ matrix.version }} && cd .. && cp Dockerfile stolon/Dockerfile
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v2
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta first
+        id: first
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}/${{ matrix.version }}-${{ matrix.pgversion }}
+          tags: |
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=sha
+          labels: |
+            maintainer=egeneralov
+            org.opencontainers.image.title=stolon
+            org.opencontainers.image.description=stolon ${{ matrix.version }} with pg ${{ matrix.pgversion }}
+            org.opencontainers.image.vendor=egeneralov
+
+      - name: Docker build & push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{ steps.first.outputs.tags }}
+          labels: ${{ steps.first.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          context: stolon
+          network: host
+          build-args: |
+            PGVERSION=${{ matrix.pgversion }}
+            VERSION=${{ matrix.version }}
